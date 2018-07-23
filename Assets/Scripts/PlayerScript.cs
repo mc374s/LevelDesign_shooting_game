@@ -11,6 +11,7 @@ public class PlayerScript : MonoBehaviour {
     public Vector3 speedDrag = new Vector3(0.0005f, 0.0006f, 0);
     public int clusterNumber2 = 6;
     public Transform muzzule;
+    public GameObject Bullet;
 
     private Vector3 leftBottom,rightTop;
     private float radius;
@@ -18,9 +19,9 @@ public class PlayerScript : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        
         leftBottom = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 3));
         rightTop = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 3));
+
         radius = GetComponent<SphereCollider>().radius;
 
         Debug.Log("rightTop.y : " + rightTop.y + "  rightTop.x : " + rightTop.x);
@@ -32,7 +33,8 @@ public class PlayerScript : MonoBehaviour {
         Move();
         if (Input.GetKeyDown(KeyCode.J))
         {
-            StartCoroutine(Shot());
+            Instantiate(Bullet, transform.position,transform.rotation);
+            //StartCoroutine(Shot());
         }
 
     }
@@ -135,7 +137,7 @@ public class PlayerScript : MonoBehaviour {
 
     IEnumerator Shot()
     {
-        
+
         WaitForSeconds wait = new WaitForSeconds(0.1f);
         for (int i = 0; i < 10; i++)
         {
