@@ -42,14 +42,13 @@ public class BulletScript : MonoBehaviour {
     {
         if (collision.tag == "ENEMY")
         {
+            Debug.Log(collision.name);
             Destroy(collision.gameObject);
             Destroy(gameObject);
         }
     }
-    public void OnCollisionEnter(Collision collision)
-    {
-        //Output the Collider's GameObject's name
-        Debug.Log(collision.collider.name);
-    }
+    //public void OnCollisionEnter(Collision collision)
+    //{
+    //}
 
 }

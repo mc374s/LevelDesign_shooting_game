@@ -19,8 +19,10 @@ public class PlayerScript : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        leftBottom = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 3));
-        rightTop = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 3));
+        //leftBottom = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 3));
+        //rightTop = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 3));
+        leftBottom = new Vector3(-2.3f, -2.45f, 0);
+        rightTop = new Vector3(2.3f, 0.18f, 0);
 
         radius = GetComponent<SphereCollider>().radius;
 
@@ -154,5 +156,25 @@ public class PlayerScript : MonoBehaviour {
         Transform pt = ParticleManager.manager.particle[clusterNumber2].transform;
         pt.position = Vector3.zero;
         pt.eulerAngles = Vector3.zero;
+    }
+
+    public void OnTriggerEnter(Collider collision)
+    {
+        if(collision.tag=="WALL")
+        {
+            Debug.Log(collision.name);
+            if (collision.name=="Front")
+            {
+                transform.position = new Vector3(transform.position.x, collision.transform.position.y - radius - 0.6f, transform.position.z);
+            }
+            if (collision.name == "Left")
+            {
+                transform.position = new Vector3(collision.transform.position.x - radius - 0.6f, transform.position.y, transform.position.z);
+            }
+        }
+    }
+    public void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log(collision.collider.name);
     }
 }
