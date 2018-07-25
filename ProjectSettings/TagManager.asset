@@ -8,6 +8,7 @@ TagManager:
   - BULLET
   - ENEMY
   - WALL
+  - STONE
   layers:
   - Default
   - TransparentFX

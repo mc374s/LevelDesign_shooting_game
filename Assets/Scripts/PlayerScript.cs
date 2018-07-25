@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ParticleBulletSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour {
+
+
 
     public Vector3 velocity = new Vector3(0, 0, 0);
     public Vector3 speedAcc = new Vector3(0.001f, 0.0005f, 0);
@@ -15,18 +18,31 @@ public class PlayerScript : MonoBehaviour {
 
     private Vector3 leftBottom,rightTop;
     private float radius;
+    
+    public SimpleHealthBar healthBar;
+    public int hpMax;
+    public static int HP;
+    public SimpleHealthBar energieBar;
+    public int energieMax;
+    public static int energie = 0;
+    public GameObject explosion;
+    public GameObject damageEff;
+
+    public GameObject units;
+    public GameObject[] unit;
 
     // Use this for initialization
     void Start()
     {
         //leftBottom = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 3));
         //rightTop = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 3));
-        leftBottom = new Vector3(-2.3f, -2.45f, 0);
-        rightTop = new Vector3(2.3f, 0.18f, 0);
+        leftBottom = GameManagerScript.leftBottom;
+        rightTop = GameManagerScript.rightTop;
 
         radius = GetComponent<SphereCollider>().radius;
-
+        
         Debug.Log("rightTop.y : " + rightTop.y + "  rightTop.x : " + rightTop.x);
+        HP = hpMax;
     }
 
     // Update is called once per frame
@@ -35,10 +51,37 @@ public class PlayerScript : MonoBehaviour {
         Move();
         if (Input.GetKeyDown(KeyCode.J))
         {
-            Instantiate(Bullet, transform.position,transform.rotation);
+            GameObject clone = Instantiate(Bullet, transform.position, transform.rotation);
+            //clone.transform.Rotate(0, 0, Random.Range(-30, 30));
+
+            //GameObject center=Instantiate(Bullet, transform.position, transform.rotation);
+            //center.transform.rotation = Quaternion.Euler(0, 0, 30);
+            //Instantiate(Bullet, transform.position, transform.rotation);
             //StartCoroutine(Shot());
         }
 
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+
+            units.transform.Translate(new Vector3(0, 0.2f, 0));
+            for (int i = 0, max = unit.Length; i < max; ++i)
+            {
+                unit[i].transform.localPosition = new Vector3(0, 0, 0);
+                unit[i].transform.Translate(new Vector3(0.1f, 0, 0));
+            }
+        }
+
+        if (HP < 0)
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+            HP = 0;
+            Destroy(gameObject);
+            //StartCoroutine("RestartGame");
+            GameManagerScript.doRestartGame = true;
+
+        }
+        healthBar.UpdateBar(HP, hpMax);
+        energieBar.UpdateBar(energie, energieMax);
     }
 
     void Move()
@@ -172,9 +215,16 @@ public class PlayerScript : MonoBehaviour {
                 transform.position = new Vector3(collision.transform.position.x - radius - 0.6f, transform.position.y, transform.position.z);
             }
         }
+        if (collision.tag == "STONE")
+        {
+            HP -= 30;
+            
+            Instantiate(damageEff, transform.position, transform.rotation);
+            Debug.Log("Player Hitted " + collision.name);
+        }
     }
-    public void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log(collision.collider.name);
-    }
+    //public void OnCollisionEnter(Collision collision)
+    //{
+    //    Debug.Log(collision.collider.name);
+    //}
 }

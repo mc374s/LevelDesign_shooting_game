@@ -10,10 +10,14 @@ public class BulletScript : MonoBehaviour {
 
     private Vector3 leftBottom, rightTop;
 
+    public GameObject explosion;
+
     // Use this for initialization
     void Start () {
-        leftBottom = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 3));
-        rightTop = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 3));
+        //leftBottom = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 3));
+        //rightTop = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 3));
+        leftBottom = GameManagerScript.leftBottom;
+        rightTop = GameManagerScript.rightTop;
         Destroy(gameObject, 10.0f);
 	}
 	
@@ -40,15 +44,27 @@ public class BulletScript : MonoBehaviour {
 
     public void OnTriggerEnter(Collider collision)
     {
-        if (collision.tag == "ENEMY")
+        if (collision.tag == "STONE")
         {
-            Debug.Log(collision.name);
-            Destroy(collision.gameObject);
+            collision.GetComponent<StoneMoveScript>().HP--;
+            Debug.Log(collision.name + " HP:" + collision.GetComponent<StoneMoveScript>().HP);
+            //Destroy(collision.gameObject);
+            //gameObject.GetComponent<Renderer>().enabled = false;
+            if (explosion)
+            {
+                Instantiate(explosion, transform.position, transform.rotation);
+            }
+
+            //gameObject.GetComponent<Collider>().enabled = false;
             Destroy(gameObject);
+            PlayerScript.energie++;
+
         }
     }
+
     //public void OnCollisionEnter(Collision collision)
     //{
+    //    Debug.Log(collision.collider.name);
     //}
 
 }
