@@ -9,6 +9,7 @@ TagManager:
   - ENEMY
   - WALL
   - STONE
+  - UNIT
   layers:
   - Default
   - TransparentFX

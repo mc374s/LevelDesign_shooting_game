@@ -57,7 +57,6 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 2a3f4131afcb7e247b53942e1b6d87de, type: 2}
   m_StaticBatchInfo:
@@ -130,3 +129,5 @@ MonoBehaviour:
   rotateSpeed: {x: 0.5, y: 0.5, z: 0.1}
   HP: 20
   explosion: {fileID: 1918786955179268, guid: 84dd3727db57b8d4eba9e8b090b73c2c, type: 2}
+  explosionSmall: {fileID: 1473996508337796, guid: 73e0edfb40bdfb444991d7187daf9b70,
+    type: 2}

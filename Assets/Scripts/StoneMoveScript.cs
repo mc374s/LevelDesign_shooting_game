@@ -8,6 +8,7 @@ public class StoneMoveScript : MonoBehaviour {
     public Vector3 rotateSpeed = new Vector3(0.2f, 0.2f, 0.2f);
     public int HP = 20;
     public GameObject explosion;
+    public GameObject explosionSmall;
 	// Use this for initialization
 	void Start () {
 		
@@ -41,6 +42,15 @@ public class StoneMoveScript : MonoBehaviour {
         if (other.tag == "BULLET")
         {
             GetComponent<Rigidbody>().AddForce(new Vector3(0, 0.5f, 0));
+        }
+        if(other.tag=="UNIT")
+        {
+            HP--;
+            if (explosionSmall)
+            {
+                Instantiate(explosionSmall, other.transform.position, other.transform.rotation);
+            }
+            PlayerScript.energie -= 2;
         }
     }
 

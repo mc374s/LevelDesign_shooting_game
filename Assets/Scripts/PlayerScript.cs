@@ -31,6 +31,12 @@ public class PlayerScript : MonoBehaviour {
     public GameObject units;
     public GameObject[] unit;
 
+    private bool unitStandbyFlg;
+
+    public GameObject unitEngineEff;
+    private Transform unitsInitTransform;
+    private Transform[] unitInitTransform;
+
     // Use this for initialization
     void Start()
     {
@@ -43,6 +49,13 @@ public class PlayerScript : MonoBehaviour {
         
         Debug.Log("rightTop.y : " + rightTop.y + "  rightTop.x : " + rightTop.x);
         HP = hpMax;
+        energie = 0;
+        unitStandbyFlg = false;
+        unitsInitTransform = units.transform;
+        for (int i = 0, max = unit.Length; i < max; ++i)
+        {
+            unitInitTransform[i] = unit[i].transform;
+        }
     }
 
     // Update is called once per frame
@@ -60,15 +73,10 @@ public class PlayerScript : MonoBehaviour {
             //StartCoroutine(Shot());
         }
 
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K) && energie>50)
         {
+            StartCoroutine(BeamStandBy());
 
-            units.transform.Translate(new Vector3(0, 0.2f, 0));
-            for (int i = 0, max = unit.Length; i < max; ++i)
-            {
-                unit[i].transform.localPosition = new Vector3(0, 0, 0);
-                unit[i].transform.Translate(new Vector3(0.1f, 0, 0));
-            }
         }
 
         if (HP < 0)
@@ -180,26 +188,6 @@ public class PlayerScript : MonoBehaviour {
         transform.rotation = Quaternion.Euler(0, -velocity.x * 2500, 0);
     }
 
-    IEnumerator Shot()
-    {
-
-        WaitForSeconds wait = new WaitForSeconds(0.1f);
-        for (int i = 0; i < 10; i++)
-        {
-            ClusterMissileRandom();
-            yield return wait;
-        }
-        yield return new WaitForSeconds(1);
-    }
-
-    void ClusterMissileRandom()
-    {
-        muzzule.transform.rotation = Random.rotation;
-        ParticleManager.manager.Emit(clusterNumber2, 1, muzzule.position, muzzule.rotation);
-        Transform pt = ParticleManager.manager.particle[clusterNumber2].transform;
-        pt.position = Vector3.zero;
-        pt.eulerAngles = Vector3.zero;
-    }
 
     public void OnTriggerEnter(Collider collision)
     {
@@ -227,4 +215,73 @@ public class PlayerScript : MonoBehaviour {
     //{
     //    Debug.Log(collision.collider.name);
     //}
+
+    private IEnumerator BeamStandBy()
+    {
+        yield return new WaitForSeconds(0.01f);
+        Invoke("flgOn", 2.0f);
+
+        //for (int i = 0, max = unit.Length; i < max; ++i)
+        //{
+        //    unit[i].transform.localPosition = new Vector3(0, 0, 0);
+        //}
+
+        while (!unitStandbyFlg)
+        {
+            units.transform.Translate(new Vector3(0, 0.003f, 0));
+            for (int i = 0, max = unit.Length; i < max; ++i)
+            {
+                unit[i].transform.Translate(new Vector3(0.0015f, 0, 0));
+                //if (unit[i].transform.position.x > 0.2f)
+                //{
+                //    unit[i].transform.position = new Vector3(0.2f, unit[i].transform.position.y, unit[i].transform.position.z);
+                //}
+            }
+
+            //transform.Rotate(Vector3.up, 5.0f);
+            yield return new WaitForSeconds(0.01f);
+        }
+        yield return new WaitForSeconds(0.01f);
+    }
+
+    void flgOn()
+    {
+        unitStandbyFlg = true;
+        StartCoroutine(RoateAround());
+        for (int i = 0, max = unit.Length; i < max; ++i)
+        {
+            Instantiate(unitEngineEff, unit[i].transform);
+            //unit[i].transform.RotateAround(units.transform.position, units.transform.up, 2f);
+        }
+    }
+
+    private IEnumerator RoateAround()
+    {
+        while (unitStandbyFlg && energie>0)
+        {
+            for (int i = 0, max = unit.Length; i < max; ++i)
+            {
+                unit[i].transform.RotateAround(units.transform.position, units.transform.up, 2f);
+            }
+
+            //transform.Rotate(Vector3.up, 5.0f);
+
+            if (energie < 0)
+            {
+                units.transform.position = unitsInitTransform.position;
+                units.transform.rotation = unitsInitTransform.rotation;
+                for (int i = 0, max = unit.Length; i < max; ++i)
+                {
+                    unit[i].transform.position = unitInitTransform[i].position;
+                    unit[i].transform.rotation = unitInitTransform[i].rotation;
+                }
+                energie = 0;
+                unitStandbyFlg = false;
+            }
+
+            yield return new WaitForSeconds(0.01f);
+        }
+        yield return new WaitForSeconds(0.01f);
+
+    }
 }
